@@ -30,8 +30,29 @@ def extract_saram_in_pages():
 def get_datas(html):
     job_title = html.find("div", {"class": "area_job"}).find("a")["title"]
     corp_name = html.find("strong", {"class": "corp_name"}).find("a")["title"] 
-    return {'title':job_title, 'corp_name': corp_name}
+    
+    # def get_job_location(html):
+    big_location = html.find("div", {"class": "job_condition"}).find("a").string
+    small_location =html.find("div", {"class": "job_condition"}).find("a").find_next("a").string
+    adrress = big_location + " " + small_location;
+    
+    return {'title':job_title, 'corp_name': corp_name, 'location': adrress}
 
+
+  
+def get_job_condition(html):
+    conditions = html.find("div", {"class": "job_condition"}).find("span").find("a").parent.find_next_siblings()
+    
+    for condition in conditions[0:2]:  
+        print(condition)
+        # if condition.find_next("span") is not None:
+        #     tmp = condition.find_next("span")
+        #     first = first + ", " + tmp
+        # else:
+        #     continue
+        # print(first)
+    
+    
 
 #각 페이지에서 구직 목록을 뽑아내는 함수
 def extract_jobs(last_page):
@@ -42,8 +63,13 @@ def extract_jobs(last_page):
     soup = BeautifulSoup(result.text, "html.parser")
     recruit_lists = soup.find_all("div", {"class": "item_recruit"})
     for recruit_list in recruit_lists:
+        # job = get_job_condition(recruit_list)
+        
+        # 잠시 테스트를 위해서 주석
         job = get_datas(recruit_list)
         jobs.append(job)
+        
+        
         # if item_recruit.find("div", {"class": "area_job"}).find("a")["title"] is None:
         #     continue
         # else:
