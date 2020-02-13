@@ -36,16 +36,35 @@ def get_datas(html):
     small_location =html.find("div", {"class": "job_condition"}).find("a").find_next("a").string
     adrress = big_location + " " + small_location;
     
-    return {'title':job_title, 'corp_name': corp_name, 'location': adrress}
+    # def get_job_condition(html):
+    conditions = html.find("div", {"class": "job_condition"}).find("span").find("a").parent.find_next_siblings()
+    details = []
+    for condition in conditions:
+        details.append(condition.string)
+    " ,".join(details)
+
+    return {'title':job_title, 'corp_name': corp_name, 'location': adrress, 'condition details': details}
 
 
   
-def get_job_condition(html):
-    conditions = html.find("div", {"class": "job_condition"}).find("span").find("a").parent.find_next_siblings()
+# def get_job_condition(html):
+#     conditions = html.find("div", {"class": "job_condition"}).find("span").find("a").parent.find_next_siblings()
+#     details = []
+#     for condition in conditions:
+#         details.append(condition.string)
+#         # count = 0
+#         # if count is 0:
+#         #     detail += condition.string
+#         # else:
+#         #     count += 1
+#         #     detail += '-'
+#         #     detail += condition.string
+#         # print(detail)
+#     " ,".join(details)
+#     print(details)
+#     print(" ################  ")
     
-    for condition in conditions[0:2]:  
-        print(condition)
-        # if condition.find_next("span") is not None:
+    # if condition.find_next("span") is not None:
         #     tmp = condition.find_next("span")
         #     first = first + ", " + tmp
         # else:
@@ -63,10 +82,11 @@ def extract_jobs(last_page):
     soup = BeautifulSoup(result.text, "html.parser")
     recruit_lists = soup.find_all("div", {"class": "item_recruit"})
     for recruit_list in recruit_lists:
-        # job = get_job_condition(recruit_list)
-        
-        # 잠시 테스트를 위해서 주석
         job = get_datas(recruit_list)
+        print(job)
+        print("          ################        ")
+        # 잠시 테스트를 위해서 주석
+        # job = get_datas(recruit_list)
         jobs.append(job)
         
         
