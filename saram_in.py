@@ -26,6 +26,12 @@ def extract_saram_in_pages():
 
     return max_page
 
+#구직 목록에서 정보를 뽑아내는 함수
+def get_datas(html):
+    job_title = html.find("div", {"class": "area_job"}).find("a")["title"]
+    corp_name = html.find("strong", {"class": "corp_name"}).find("a")["title"] 
+    return {'title':job_title, 'corp_name': corp_name}
+
 
 #각 페이지에서 구직 목록을 뽑아내는 함수
 def extract_jobs(last_page):
@@ -34,13 +40,14 @@ def extract_jobs(last_page):
     # result = requests.get(f"{SARAM_IN_URL}&recruitPageCount={PAGE_JOB_COUNT}&recruitPage={page}")
     result = requests.get(f"{SARAM_IN_URL}&recruitPageCount={PAGE_JOB_COUNT}&recruitPage=1")
     soup = BeautifulSoup(result.text, "html.parser")
-    item_recruits = soup.find_all("div", {"class": "item_recruit"})
-    for item_recruit in item_recruits:
-         
-        if item_recruit.find("div", {"class": "area_job"}).find("a")["title"] is None:
-            continue
-        else:
-            print(item_recruit.find("div", {"class": "area_job"}).find("a")["title"])
+    recruit_lists = soup.find_all("div", {"class": "item_recruit"})
+    for recruit_list in recruit_lists:
+        job = get_datas(recruit_list)
+        jobs.append(job)
+        # if item_recruit.find("div", {"class": "area_job"}).find("a")["title"] is None:
+        #     continue
+        # else:
+        #     print(item_recruit.find("div", {"class": "area_job"}).find("a")["title"])
 
         
     return jobs
