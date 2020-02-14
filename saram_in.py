@@ -43,7 +43,12 @@ def get_datas(html):
     # def get_link(html):
     corp_link = html.find("strong", {"class": "corp_name"}).find("a")["href"]
     front_link = "http://www.saramin.co.kr"
-    return {'title':job_title, 'corp_name': corp_name, 'location': adrress, 'condition details': details, 'recruit link': front_link + corp_link}
+    return {
+        'title':job_title, 
+        'corp_name': corp_name, 
+        'location': adrress, 
+        'condition details': details, 
+        'recruit link': front_link + corp_link}
 
 
   
@@ -87,7 +92,7 @@ def extract_jobs(last_page, url, count_number):
         for recruit_list in recruit_lists:
             job = get_datas(recruit_list)
             jobs.append(job)
-            print(jobs)
+           
         
         # if item_recruit.find("div", {"class": "area_job"}).find("a")["title"] is None:
         #     continue
