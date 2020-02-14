@@ -1,12 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 
-SEARCH_WORD = "파이썬"
-PAGE_JOB_COUNT = 50
-SARAM_IN_URL = f"http://www.saramin.co.kr/zf_user/search/recruit?searchType=search&&searchword={SEARCH_WORD}&panel_type=&search_optional_item=y&search_done=y&panel_count=y&recruitSort=relation"
 
-def extract_saram_in_pages():
-    html_result = requests.get(SARAM_IN_URL)
+def extract_saram_in_pages(html):
+    html_result = requests.get(html)
     
     # 웹페이지를 가져와서 soup로 만들어줬다.
     html_soup = BeautifulSoup(html_result.text, "html.parser")
@@ -43,7 +40,10 @@ def get_datas(html):
         details.append(condition.string)
     " ,".join(details)
 
-    return {'title':job_title, 'corp_name': corp_name, 'location': adrress, 'condition details': details}
+    # def get_link(html):
+    corp_link = html.find("strong", {"class": "corp_name"}).find("a")["href"]
+    front_link = "http://www.saramin.co.kr"
+    return {'title':job_title, 'corp_name': corp_name, 'location': adrress, 'condition details': details, 'recruit link': front_link + corp_link}
 
 
   
@@ -71,24 +71,23 @@ def get_datas(html):
         #     continue
         # print(first)
     
-    
 
+# def get_link(html):
+#     corp_link = html.find("strong", {"class": "corp_name"}).find("a")["href"]
+#     print(corp_link)
 #각 페이지에서 구직 목록을 뽑아내는 함수
-def extract_jobs(last_page):
+
+def extract_jobs(last_page, url, count_number):
     jobs = []
-    # for page in range(last_page):
-    # result = requests.get(f"{SARAM_IN_URL}&recruitPageCount={PAGE_JOB_COUNT}&recruitPage={page}")
-    result = requests.get(f"{SARAM_IN_URL}&recruitPageCount={PAGE_JOB_COUNT}&recruitPage=1")
-    soup = BeautifulSoup(result.text, "html.parser")
-    recruit_lists = soup.find_all("div", {"class": "item_recruit"})
-    for recruit_list in recruit_lists:
-        job = get_datas(recruit_list)
-        print(job)
-        print("          ################        ")
-        # 잠시 테스트를 위해서 주석
-        # job = get_datas(recruit_list)
-        jobs.append(job)
-        
+    for page in range(last_page):
+        result = requests.get(f"{url}&recruitPageCount={count_number}&recruitPage={page}")
+        print(f"Scrapping page {page}")
+        soup = BeautifulSoup(result.text, "html.parser")
+        recruit_lists = soup.find_all("div", {"class": "item_recruit"})
+        for recruit_list in recruit_lists:
+            job = get_datas(recruit_list)
+            jobs.append(job)
+            print(jobs)
         
         # if item_recruit.find("div", {"class": "area_job"}).find("a")["title"] is None:
         #     continue
